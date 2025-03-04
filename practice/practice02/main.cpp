@@ -2,19 +2,114 @@
 //
 
 #include <iostream>
+#include <iomanip>
+#include <fstream>
+
+
+
+void displayMenu()
+{
+    std::cout << "Welcome to Ace Banking " << std::endl;
+    std::cout << "Main Menu: " << std::endl;
+    std::cout << "1. Balance" << std::endl;
+    std::cout << "2. Deposit" << std::endl;
+    std::cout << "3. Withdraw " << std::endl;
+    std::cout << "4. Exit" << std::endl;
+}
+
+void menuSelection(int choice, double& balance)
+{
+    switch (choice)
+    {
+    case 1:
+        std::cout << "Current Balance: $" << std::fixed<< std::setprecision(2)<< balance << std::endl;
+        break;
+    case 2:
+        double deposit;
+        std::cout << "Enter deposit amount: $";
+        std::cin >> deposit;
+        if (deposit > 0)
+        {
+            balance += deposit;
+        }
+        else
+        {
+            std::cout << "Enter positive amount";
+        }
+        break;
+    case 3:
+        double withdrawl;
+        std::cout << "Enter withdrawl amount: $";
+        std::cin >> withdrawl;
+
+        if (withdrawl > 0 && withdrawl <= balance)
+        {
+            balance -= withdrawl;
+        }
+        else
+        {
+            std::cout << "Enter an amount within your balance";
+        }
+        break;
+    case 4:
+        std::cout << "Have a nice day!";
+        break;
+    default:
+        std::cout << "Invalid input!";
+    }
+}
+
+void updatedBalance(double balance)
+{
+    std::ofstream accountBalance{ "account_balance.txt" };
+    if (accountBalance.is_open())
+    {
+        accountBalance<<balance;
+    }
+    else
+    {
+        std::cerr << "not able to load file";
+    }
+}
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    double balance = 0.0; //having problems with setting value to desired balance
+    std::ifstream startingBalance{ "account_balance.txt"};
+
+    if (startingBalance.is_open())
+    {
+        balance = 175.39;
+        startingBalance >> balance;
+    }
+    else
+    {
+        balance = 100.00;
+        startingBalance >> balance;
+    }
+
+    int choice;
+
+    do
+    {
+        displayMenu();
+
+        std::cout << "Select from the menu: ";
+        std::cin >> choice;
+
+        if (choice < 1 || choice > 4)
+        {
+            std::cout << "invalid choice!";
+        }
+        else
+        {
+            menuSelection(choice, balance);
+            updatedBalance(balance);
+        }
+
+    } while (choice != 4);
+
+    return 0;
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
 
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
